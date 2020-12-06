@@ -40,6 +40,9 @@ def index():
             # next line prevents hacking tricks with uploaded files accessing bash (The more you know***)
             filename = secure_filename(file.filename)
 
+
+
+
             requested_image = request.files['file'].read()
 
 
