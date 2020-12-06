@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, render_template, send_from_directory
+from flask import Flask, request, redirect, url_for, render_template, send_from_directory, send_file
 from werkzeug.utils import secure_filename
 import numpy as np
 from keras.applications.vgg16 import VGG16, preprocess_input, decode_predictions
@@ -26,6 +26,10 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+
+
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
 
@@ -40,24 +44,48 @@ def index():
             # next line prevents hacking tricks with uploaded files accessing bash (The more you know***)
             filename = secure_filename(file.filename)
 
-
-
-
             requested_image = request.files['file'].read()
+            print(type(requested_image), file=sys.stderr)  # class bytes, I can send that
+
+            ##### SERVE TO HTML
+            #serve_image(requested_image)  # send this to route so we can view it
+
+            # BytesIO makes an object in memory, and Image makes a PIL object out of it
+            pil_img = Image.open(io.BytesIO(requested_image))
+            #serve_image(test_me)  # send this to route so we can view it
+
+            if pil_img.mode != 'RGB':
+                pil_img = pil_img.convert('RGB')
 
 
-            test_me = Image.open(io.BytesIO(requested_image))
-            if test_me.mode != 'RGB':
-                test_me = test_me.convert('RGB')
 
-            print('IMG TYPE!', type(test_me), file=sys.stderr)
 
-            test_me = test_me.resize((150, 150))  # image is from keras
+            ###############
+            @app.route('/image.png')
+            def serve_image():
+                # my numpy array
+                #arr = np.array(test_me)
 
+                # convert numpy array to PIL Image
+                #img = Image.fromarray(arr.astype('uint8'))
+
+                # create file-object in memory
+                file_object = io.BytesIO()
+
+                # write PNG in file-object
+                pil_img.save(file_object, 'PNG')
+
+                # move to beginning of file so `send_file()` it will read from start
+                file_object.seek(0)
+
+                return send_file(file_object, mimetype='image/PNG')
+            ################
+
+            serve_image()
+
+            # now do my preprocessing for prediction
+            test_me = pil_img.resize((150, 150))  # image is from keras
             test_me = image.img_to_array(test_me)
-            print('IMG SIZE!', test_me.shape, file=sys.stderr)
-
-
             test_me = np.expand_dims(test_me, axis=0)
 
             inputs = preprocess_input(test_me)
@@ -78,7 +106,6 @@ def index():
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
 
 
 if __name__ == '__main__':
