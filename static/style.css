@@ -1,0 +1,22 @@
+body{
+    background: #f9f9f9;
+}
+
+.goodnews.badnews {
+        font-size: 1.8em;
+}
+
+.goodnews {
+    color: green;
+}
+
+.badnews {
+    color: indianred;
+}
+#footer {
+    margin: auto;
+    width: 100%;
+    text-align: center;
+
+}
+
