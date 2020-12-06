@@ -4,6 +4,7 @@ import numpy as np
 import keras
 from keras.models import load_model
 import os
+import time
 
 model = load_model('model/chest_xray_cnn_100_801010.h5')
 
@@ -40,6 +41,7 @@ def index():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)) # save copy of file!!!!
             #process_file(os.path.join(app.config['UPLOAD_FOLDER'], filename), filename)
             # after processing, we just redirect back to the
+            time.sleep(5)
             filepath = app.root_path + '/static/uploads/' + filename
             test_image = keras.preprocessing.image.load_img(filepath, target_size=(150, 150))
             test_image = keras.preprocessing.image.img_to_array(test_image)
