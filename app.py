@@ -7,18 +7,23 @@ from keras.models import load_model
 import os
 from PIL import Image
 import io, sys
+import random
 
 model = load_model('model/chest_xray_cnn_100_801010.h5')
+image_list = [0]
 
 UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '/static/uploads'
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 
+
 app = Flask(__name__, static_url_path="/static")
 
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # limit upload size upto 8mb
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
+
 
 
 def allowed_file(filename):
@@ -27,7 +32,24 @@ def allowed_file(filename):
 
 
 
+@app.route('/image.png')  # route is to an image name which we will add file to
+def serve_image():
+    # my numpy array
+    #arr = np.array(test_me)
 
+    # convert numpy array to PIL Image
+    #img = Image.fromarray(arr.astype('uint8'))
+
+    # create file-object in memory
+    file_object = io.BytesIO()
+
+    # write PNG in file-object
+    image_list[-1].save(file_object, 'PNG')
+
+    # move to beginning of file so `send_file()` it will read from start
+    file_object.seek(0)
+
+    return send_file(file_object, mimetype='image/PNG', cache_timeout=0) #cache timeout or the image won't change
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -59,28 +81,10 @@ def index():
 
 
 
+            image_list.append(pil_img)
 
-            ###############
-            @app.route('/image.png')
-            def serve_image():
-                # my numpy array
-                #arr = np.array(test_me)
-
-                # convert numpy array to PIL Image
-                #img = Image.fromarray(arr.astype('uint8'))
-
-                # create file-object in memory
-                file_object = io.BytesIO()
-
-                # write PNG in file-object
-                pil_img.save(file_object, 'PNG')
-
-                # move to beginning of file so `send_file()` it will read from start
-                file_object.seek(0)
-
-                return send_file(file_object, mimetype='image/PNG')
-            ################
-
+            # turns out you can't overwrite at the same img location, so I will make a unique id
+            # image_served is a list to avoid scope issues and inabiltiy to pass file object
             serve_image()
 
             # now do my preprocessing for prediction
