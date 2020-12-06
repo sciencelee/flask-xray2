@@ -32,8 +32,8 @@ def allowed_file(filename):
 
 
 
-@app.route('/image.png')  # route is to an image name which we will add file to
-def serve_image():
+@app.route('/image/<id>')  # route is to an image name which we will add file to
+def serve_image(id):
     # my numpy array
     #arr = np.array(test_me)
 
@@ -44,7 +44,7 @@ def serve_image():
     file_object = io.BytesIO()
 
     # write PNG in file-object
-    image_list[-1].save(file_object, 'PNG')
+    image_list[id-1].save(file_object, 'PNG')
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
@@ -82,10 +82,11 @@ def index():
 
 
             image_list.append(pil_img)
+            id = str(len(image_list)) + '.png'
 
             # turns out you can't overwrite at the same img location, so I will make a unique id
             # image_served is a list to avoid scope issues and inabiltiy to pass file object
-            serve_image()
+            serve_image(len(image_list))
 
             # now do my preprocessing for prediction
             test_me = pil_img.resize((150, 150))  # image is from keras
@@ -100,8 +101,8 @@ def index():
                 pred = 'Normal'
 
             result = "{:.2f}".format(result[0][0])
-
-            return render_template('index.html', filename=filename, pred=pred, result=result)  # pass whatever we need to populate index
+            ## Get rid of next line
+            return render_template('index.html', filename=filename, pred=pred, result=result, id=id)  # pass whatever we need to populate index
 
     return render_template('index.html')  # pass whatever we need to populate index
 

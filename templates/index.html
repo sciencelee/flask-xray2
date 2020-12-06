@@ -29,7 +29,7 @@
         {% if filename %}
             {{ filename }}<br>
             <figure>
-                <img src="image.png" width="300" height="300"/>
+                <img src="{{ id }}" width="300" height="300"/>
 
                 {#  <img src="{{url_for('static', filename='uploads/' + filename)}}" width="300" height="300"/> #}
                 <figcaption>image resized to 150x150px for model</figcaption>
