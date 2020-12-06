@@ -10,7 +10,7 @@ import io, sys
 import random
 
 model = load_model('model/chest_xray_cnn_100_801010.h5')
-image_list = [0]
+image_list = []
 
 UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '/static/uploads'
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
@@ -86,7 +86,7 @@ def index():
 
             # turns out you can't overwrite at the same img location, so I will make a unique id
             # image_served is a list to avoid scope issues and inabiltiy to pass file object
-            serve_image(len(image_list)-1)
+            serve_image(len(image_list))
 
             # now do my preprocessing for prediction
             test_me = pil_img.resize((150, 150))  # image is from keras

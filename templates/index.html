@@ -13,8 +13,9 @@
     <p>The training dataset used in this project can be found  <a href="https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia">here at kaggle.com</a>.</p>
     <p>This model attempts to correctly classify a frontal chest xray as either 'Normal' or 'Pneumonia.<br>
     This tool is for education purposes only and should not be used for diagnosis of pneumonia cases.<br>
-    If you have symptoms of pneumonia, please seek professional medical assistance.</p>
-     <hr>
+    If you have symptoms of pneumonia, please seek professional medical assistance.
+    </p>
+    <hr>
     <h2>Upload a frontal chest xray </h2>
     <h4>(jpg gif or png), 8MB or smaller, black/white images</h4>
 
@@ -35,15 +36,14 @@
                 <figcaption>image resized to 150x150px for model</figcaption>
             </figure>
 
-
             {% if pred == 'Normal' %}
                 <h2>Our model predicts: <b class="goodnews">{{ pred }}</b></h2><br>
             {% else %}
                 <h2>Our model predicts: <b class="badnews">{{ pred }}</b></h2>
-
                 Numerical result (0 to 1): {{ result }}
 
             {% endif %}
+
 
         {% endif %}
      </div>
