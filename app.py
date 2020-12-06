@@ -32,7 +32,7 @@ def allowed_file(filename):
 
 
 
-@app.route('/image/<id>')  # route is to an image name which we will add file to
+@app.route('/<id>')  # route is to an image name which we will add file to
 def serve_image(id):
     # my numpy array
     #arr = np.array(test_me)
@@ -44,7 +44,7 @@ def serve_image(id):
     file_object = io.BytesIO()
 
     # write PNG in file-object
-    image_list[id-1].save(file_object, 'PNG')
+    image_list[-1].save(file_object, 'PNG')
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
