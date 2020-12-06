@@ -86,7 +86,7 @@ def index():
 
             # turns out you can't overwrite at the same img location, so I will make a unique id
             # image_served is a list to avoid scope issues and inabiltiy to pass file object
-            serve_image(len(image_list))
+            serve_image(len(image_list)-1)
 
             # now do my preprocessing for prediction
             test_me = pil_img.resize((150, 150))  # image is from keras
