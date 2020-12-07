@@ -42,8 +42,7 @@ def serve_image(id):
     # create file-object in memory only
     file_object = io.BytesIO()
 
-    for i in range(len(image_list) -1):
-        image_list[i] = None
+
 
     # write PNG in file-object
     # my images are stored in a list which is accessible by scope rules for python
@@ -97,6 +96,9 @@ def index():
                 pil_img = pil_img.convert('RGB')
 
             # dump the PIL format image into my list
+            for i in range(len(image_list)):
+                image_list[i] = None
+
             image_list.append(pil_img)  # list has scope!!
 
             # Had a lot of difficutly here, so I will explain this solution
