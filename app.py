@@ -21,14 +21,18 @@ model = load_model('model/chest_xray_cnn_100_801010.h5')  # model is CNN trained
 image_list = [None]
 image_count = 1
 
+class Container():
+    pass
 
+container = Container()
+container.image = None
 
 app = Flask(__name__, static_url_path="/static")
 
 # configure my app
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # attempt to keep persistant images from appearing (clear cache)
+#app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # attempt to keep persistant images from appearing (clear cache)
 # limit upload size upto 8mb
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
 
@@ -45,13 +49,15 @@ def serve_image(id):
 
     # write PNG in file-object
     # my images are stored in a list which is accessible by scope rules for python
-    image_list[0].save(file_object, 'PNG')
+    #image_list[0].save(file_object, 'PNG')
+    container.image.save(file_object, 'PNG')
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
 
     # send back an actual png image to display in HTML
-    return send_file(file_object, mimetype='image/PNG', cache_timeout=0) # cache timeout or the image won't change
+    #return send_file(file_object, mimetype='image/PNG', cache_timeout=0) # cache timeout or the image won't change
+    return send_file(file_object, mimetype='image/PNG') # cache timeout or the image won't change
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -94,9 +100,9 @@ def index():
             if pil_img.mode != 'RGB':
                 pil_img = pil_img.convert('RGB')
 
-            # dump the PIL format image into my list  SHOULD USE COMPREHENSION
-            image_list[0] = pil_img
-
+            # dump the PIL format image into my list
+            #image_list[0] = pil_img
+            container.image = pil_img
 
             image_id = random.randrange(1000000)
 
@@ -122,7 +128,7 @@ def index():
                 pred = 'Normal'
 
             result = "{:.2f}".format(result)
-            time.sleep(3)
+
             # We have results, now pass them back into the template to display
             return render_template('index.html', filename=filename, pred=pred, result=result, id=id)  # pass whatever we need to populate index
 
