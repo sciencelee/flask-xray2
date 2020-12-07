@@ -14,7 +14,7 @@ from keras.preprocessing import image
 from keras.models import load_model
 import os
 from PIL import Image
-import io, sys
+import io, sys, time
 import random
 
 model = load_model('model/chest_xray_cnn_100_801010.h5')  # model is CNN trained with 5k+ images
@@ -121,7 +121,7 @@ def index():
                 pred = 'Normal'
 
             result = "{:.2f}".format(result)
-
+            time.sleep(2)
             # We have results, now pass them back into the template to display
             return render_template('index.html', filename=filename, pred=pred, result=result, id=id)  # pass whatever we need to populate index
 
