@@ -18,7 +18,7 @@ import io, sys
 import random
 
 model = load_model('model/chest_xray_cnn_100_801010.h5')  # model is CNN trained with 5k+ images
-image_list = []
+image_list = [None]
 
 
 
@@ -41,8 +41,9 @@ def allowed_file(filename):
 def serve_image(id):
     # create file-object in memory only
     file_object = io.BytesIO()
+
     for i in range(len(image_list) -1):
-        image_list.pop(i)
+        image_list[i] = None
 
     # write PNG in file-object
     # my images are stored in a list which is accessible by scope rules for python
