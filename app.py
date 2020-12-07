@@ -41,6 +41,8 @@ def allowed_file(filename):
 def serve_image(id):
     # create file-object in memory only
     file_object = io.BytesIO()
+    for i in range(len(image_list) -1):
+        image_list.pop(i)
 
     # write PNG in file-object
     # my images are stored in a list which is accessible by scope rules for python
