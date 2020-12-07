@@ -19,6 +19,7 @@ import random
 
 model = load_model('model/chest_xray_cnn_100_801010.h5')  # model is CNN trained with 5k+ images
 image_list = [None]
+image_count = 1
 
 
 
@@ -42,14 +43,9 @@ def serve_image(id):
     # create file-object in memory only
     file_object = io.BytesIO()
 
-
-
     # write PNG in file-object
     # my images are stored in a list which is accessible by scope rules for python
-    for i in range(len(image_list)):
-        if image_list[i] != 0:
-            image_list[i].save(file_object, 'PNG')
-            break
+    image_list[0].save(file_object, 'PNG')
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
@@ -99,17 +95,17 @@ def index():
                 pil_img = pil_img.convert('RGB')
 
             # dump the PIL format image into my list  SHOULD USE COMPREHENSION
-            for i in range(len(image_list)):
-                image_list[i] = 0
+            image_list[0] = pil_img
 
-            image_list.append(pil_img)  # list has scope!!
+
+            image_id = random.randrange(1000000)
 
             # Had a lot of difficutly here, so I will explain this solution
             # turns out you can't overwrite at the same img location (route), so I will make a unique id for each
             # image_served is a list to avoid scope issues and inabiltiy to pass file object
             # I will use the image_list to grab the object from that route/function
-            id = str(len(image_list)) + '.png'  # this will be my file name for HTML to show xray image
-            serve_image(len(image_list))
+            id = str(image_id) + '.png'  # this will be my file name for HTML to show xray image
+            serve_image(image_id)
 
             # Data Science part
             # now do my preprocessing for prediction
