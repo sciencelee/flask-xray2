@@ -46,7 +46,10 @@ def serve_image(id):
 
     # write PNG in file-object
     # my images are stored in a list which is accessible by scope rules for python
-    image_list[-1].save(file_object, 'PNG')
+    for i in range(len(image_list)):
+        if image_list[i] != 0:
+            image_list[i].save(file_object, 'PNG')
+            break
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
@@ -95,9 +98,9 @@ def index():
             if pil_img.mode != 'RGB':
                 pil_img = pil_img.convert('RGB')
 
-            # dump the PIL format image into my list
+            # dump the PIL format image into my list  SHOULD USE COMPREHENSION
             for i in range(len(image_list)):
-                image_list[i] = None
+                image_list[i] = 0
 
             image_list.append(pil_img)  # list has scope!!
 
@@ -123,7 +126,7 @@ def index():
                 pred = 'Normal'
 
             result = "{:.2f}".format(result)
-            time.sleep(2)
+            time.sleep(1)
             # We have results, now pass them back into the template to display
             return render_template('index.html', filename=filename, pred=pred, result=result, id=id)  # pass whatever we need to populate index
 
