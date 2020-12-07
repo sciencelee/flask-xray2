@@ -1,18 +1,16 @@
 body{
     background: #f9f9f9;
-    background: red;
     font-family: "Arial";
 
 
 }
 
 h1{
-        font-family: "Arial Black";
-
+    font-family: "Arial Black";
    font-size: 3em;
 }
 .goodnews.badnews {
-        font-size: 1.8em;
+    font-size: 1.8em;
 }
 
 .goodnews {
@@ -26,11 +24,7 @@ h1{
     margin: auto;
     width: 100%;
     text-align: center;
-
 }
-
-
-
 
 .flex-container {
     display: flex;
