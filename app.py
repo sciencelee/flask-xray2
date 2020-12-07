@@ -122,7 +122,7 @@ def index():
                 pred = 'Normal'
 
             result = "{:.2f}".format(result)
-            time.sleep(1)
+            time.sleep(3)
             # We have results, now pass them back into the template to display
             return render_template('index.html', filename=filename, pred=pred, result=result, id=id)  # pass whatever we need to populate index
 
