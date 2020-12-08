@@ -6,7 +6,8 @@ Flask web app for taking in medical chest xrays and returning Pneumonia or Norma
 - data routed to root index.html template
 '''
 
-from flask import Flask, request, redirect, url_for, render_template, send_from_directory, send_file
+from flask import Flask, request, redirect, url_for, render_template, send_from_directory, send_file, get_template_attribute, session
+from flask_session import Session
 from werkzeug.utils import secure_filename
 import numpy as np
 from keras.applications.vgg16 import VGG16, preprocess_input, decode_predictions
@@ -21,6 +22,10 @@ import sqlite3
 model = load_model('model/chest_xray_cnn_100_801010.h5')  # model is CNN trained with 5k+ images
 image_list = [0]
 app = Flask(__name__, static_url_path="/static")
+SESSION_TYPE = 'filesystem'
+app.config.from_object(__name__)
+Session(app)
+
 
 # configure my app
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
@@ -36,14 +41,15 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+# ORIGINAL ROUTE
 @app.route('/<id>')  # route is to an image name which we will add file to
 def serve_image(id):
-    # create file-object in memory only
+ 
     # print("#\n"*5, id, file=sys.stderr)  # troubleshooting
     file_object = io.BytesIO()
 
     # write PNG in file-object
-    image_list[0].save(file_object, 'PNG')
+    session.get('img').save(file_object, 'PNG')
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
@@ -95,7 +101,7 @@ def index():
                 pil_img = pil_img.convert('RGB')
 
             # dump the PIL format image into my list
-            image_list[0] = pil_img
+            session['img'] = pil_img
 
             image_id = random.randrange(1e8)
 
@@ -121,11 +127,11 @@ def index():
                 pred = 'Normal'
 
             result = "{:.2f}".format(result)
-
             # We have results, now pass them back into the template to display
             return render_template('index.html', filename=filename, pred=pred, result=result, id=id)  # pass whatever we need to populate index
 
     return render_template('index.html')  # show the template even if we got nothing from POST
+
 
 
 if __name__ == '__main__':

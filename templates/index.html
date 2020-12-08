@@ -20,24 +20,24 @@
     <h4>(jpg gif or png), 8MB or smaller, black/white images</h4>
 
     <form method=post enctype=multipart/form-data>
-            <input type=file name=file>
-          <input type=submit value=Submit>
+            <input type="file" name='file' value="Upload Image">
+            <input type=submit name="action" value="Submit">
+
    </form><br><br>
 
-
     <div class="output">
-
             {% if filename %}
 
-                    {{ filename }}<br>
-                    <figure>
-                        <img src="{{ id }}" width="300" height="300"/>
-                        <figcaption>image resized to 150x150px for model</figcaption>
-                    </figure>
+                {{ filename }}<br>
 
+            <figure>
+                <img src="{{ id }}" width="300" height="300"/>
+                <figcaption>image resized to 150x150px for model</figcaption>
+            </figure>
 
+            {% endif %}
 
-
+            {% if filename %}
 
                 {% if pred == 'Normal' %}
                     <h2>Our model predicts: <b class="goodnews">{{ pred }}</b></h2><br>
@@ -47,10 +47,11 @@
                 {% endif %}
             {% endif %}
 
-        </div>
     </div>
-</body>
 
+</div>
+
+</body>
     <div id="footer">
         <p>&copy; Aaron Lee -- 2020</p>
       <a href="https://sciencelee.medium.com">Other projects</a>
