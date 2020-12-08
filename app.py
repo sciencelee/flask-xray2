@@ -102,7 +102,7 @@ def index():
 
             image_id = random.randrange(1e12)
             image_dict[str(image_id)] = pil_img  # place the image at the image_id key
-            time.sleep(1)
+            time.sleep(5)
 
             # Had a lot of difficutly here, so I will explain this solution
             # turns out you can't overwrite at the same img location (route), so I will make a unique id for each
