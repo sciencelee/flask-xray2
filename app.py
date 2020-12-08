@@ -100,7 +100,7 @@ def index():
             #image_list[0] = pil_img
             #container.image = pil_img
 
-            image_id = random.randrange(1000000)
+            image_id = random.randrange(1e12)
             image_dict[str(image_id)] = pil_img  # place the image at the image_id key
             time.sleep(1)
 
