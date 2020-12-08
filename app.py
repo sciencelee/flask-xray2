@@ -7,6 +7,7 @@ Flask web app for taking in medical chest xrays and returning Pneumonia or Norma
 '''
 
 from flask import Flask, request, redirect, url_for, render_template, send_from_directory, send_file
+
 from werkzeug.utils import secure_filename
 import numpy as np
 from keras.applications.vgg16 import VGG16, preprocess_input, decode_predictions
@@ -18,14 +19,10 @@ import io, sys, time
 import random
 
 model = load_model('model/chest_xray_cnn_100_801010.h5')  # model is CNN trained with 5k+ images
-image_list = [None]
-image_count = 1
+image_dict = {}
 
-class Container():
-    pass
 
-container = Container()
-container.image = None
+
 
 app = Flask(__name__, static_url_path="/static")
 
@@ -45,12 +42,12 @@ def allowed_file(filename):
 @app.route('/<id>')  # route is to an image name which we will add file to
 def serve_image(id):
     # create file-object in memory only
+    print("#\n"*5, id, file=sys.stderr)
     file_object = io.BytesIO()
 
     # write PNG in file-object
     # my images are stored in a list which is accessible by scope rules for python
-    #image_list[0].save(file_object, 'PNG')
-    container.image.save(file_object, 'PNG')
+    image_dict[str(id[:-4])].save(file_object, 'PNG')
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
@@ -91,7 +88,6 @@ def index():
 
             # pull the data from the POST data
             requested_image = request.files['file'].read()
-            print(type(requested_image), file=sys.stderr)
 
             # BytesIO makes an object in memory, and Image makes a PIL object out of it
             pil_img = Image.open(io.BytesIO(requested_image))
@@ -102,16 +98,18 @@ def index():
 
             # dump the PIL format image into my list
             #image_list[0] = pil_img
-            container.image = pil_img
+            #container.image = pil_img
 
             image_id = random.randrange(1000000)
+            image_dict[str(image_id)] = pil_img  # place the image at the image_id key
+            time.sleep(1)
 
             # Had a lot of difficutly here, so I will explain this solution
             # turns out you can't overwrite at the same img location (route), so I will make a unique id for each
             # image_served is a list to avoid scope issues and inabiltiy to pass file object
             # I will use the image_list to grab the object from that route/function
             id = str(image_id) + '.png'  # this will be my file name for HTML to show xray image
-            serve_image(image_id)
+            #serve_image(image_id)
 
             # Data Science part
             # now do my preprocessing for prediction
