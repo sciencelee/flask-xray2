@@ -7,7 +7,6 @@ Flask web app for taking in medical chest xrays and returning Pneumonia or Norma
 '''
 
 from flask import Flask, request, redirect, url_for, render_template, send_from_directory, send_file
-
 from werkzeug.utils import secure_filename
 import numpy as np
 from keras.applications.vgg16 import VGG16, preprocess_input, decode_predictions
@@ -17,19 +16,16 @@ import os
 from PIL import Image
 import io, sys, time
 import random
+import sqlite3
 
 model = load_model('model/chest_xray_cnn_100_801010.h5')  # model is CNN trained with 5k+ images
-image_dict = {}
-
-
-
-
+image_list = [0]
 app = Flask(__name__, static_url_path="/static")
 
 # configure my app
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-#app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # attempt to keep persistant images from appearing (clear cache)
+
 # limit upload size upto 8mb
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
 
@@ -39,15 +35,15 @@ def allowed_file(filename):
     # make sure it is only an allowed extension as we defined in ALLOWED_EXTENSIONS set
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @app.route('/<id>')  # route is to an image name which we will add file to
 def serve_image(id):
     # create file-object in memory only
-    print("#\n"*5, id, file=sys.stderr)
+    # print("#\n"*5, id, file=sys.stderr)  # troubleshooting
     file_object = io.BytesIO()
 
     # write PNG in file-object
-    # my images are stored in a list which is accessible by scope rules for python
-    image_dict[str(id[:-4])].save(file_object, 'PNG')
+    image_list[0].save(file_object, 'PNG')
 
     # move to beginning of file so `send_file()` it will read from start
     file_object.seek(0)
@@ -83,6 +79,8 @@ def index():
 
         # if we have a file and it is named properly, then we can do the processing and model part
         if file and allowed_file(file.filename):
+
+
             # next line prevents hacking tricks with uploaded files accessing bash (The more you know***)
             filename = secure_filename(file.filename)
 
@@ -97,19 +95,16 @@ def index():
                 pil_img = pil_img.convert('RGB')
 
             # dump the PIL format image into my list
-            #image_list[0] = pil_img
-            #container.image = pil_img
+            image_list[0] = pil_img
 
-            image_id = random.randrange(1e12)
-            image_dict[str(image_id)] = pil_img  # place the image at the image_id key
-            time.sleep(5)
+            image_id = random.randrange(1e8)
 
             # Had a lot of difficutly here, so I will explain this solution
             # turns out you can't overwrite at the same img location (route), so I will make a unique id for each
             # image_served is a list to avoid scope issues and inabiltiy to pass file object
             # I will use the image_list to grab the object from that route/function
             id = str(image_id) + '.png'  # this will be my file name for HTML to show xray image
-            #serve_image(image_id)
+            #serve_image(image_id)  # do not serve, it gets served when html calls it.
 
             # Data Science part
             # now do my preprocessing for prediction
