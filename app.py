@@ -18,7 +18,11 @@ from PIL import Image
 import io, sys, time
 import random
 
-model = load_model('model/chest_xray_cnn_100_801010.h5')  # model is CNN trained with 5k+ images
+# dropout currently performing at 98.3%, cnn at 97+
+cnn = 'model/chest_xray_cnn_100_801010.h5'
+dropout_cnn = 'model/chest_xray_cnn_dropout_40_801010.h5'
+
+model = load_model(dropout_cnn)  # model is CNN trained with 5k+ images
 image_list = [0]
 app = Flask(__name__, static_url_path="/static")
 SESSION_TYPE = 'filesystem'
