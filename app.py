@@ -17,7 +17,6 @@ import os
 from PIL import Image
 import io, sys, time
 import random
-import sqlite3
 
 model = load_model('model/chest_xray_cnn_100_801010.h5')  # model is CNN trained with 5k+ images
 image_list = [0]
