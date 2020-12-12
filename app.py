@@ -21,8 +21,9 @@ import random
 # dropout currently performing at 98.3%, cnn at 97+
 cnn = 'model/chest_xray_cnn_100_801010.h5'
 dropout_cnn = 'model/chest_xray_cnn_dropout_40_801010.h5'
+best_model = 'model/best_model.h5'
 
-model = load_model(dropout_cnn)  # model is CNN trained with 5k+ images
+model = load_model(best_model)  # model is CNN trained with 5k+ images
 image_list = [0]
 app = Flask(__name__, static_url_path="/static")
 SESSION_TYPE = 'filesystem'
