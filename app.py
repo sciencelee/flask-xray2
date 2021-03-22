@@ -134,7 +134,7 @@ def index():
             # We have results, now pass them back into the template to display
             return render_template('index.html', filename=filename, pred=pred, result=result, id=id)  # pass whatever we need to populate index
 
-    return render_template('index.html')  # show the template even if we got nothing from POST
+    return render_template('index.html', filename='pneum1.jpg', pred='Pneumonia', id='static/pneum1.jpeg')  # show the template even if we got nothing from POST
 
 
 
